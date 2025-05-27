@@ -8,7 +8,7 @@ const uploadRoutes = require('./routes/uploadRoutes')
 const userRoutes = require('./routes/userRoutes')
 const categoryRoutes = require ('./routes/categoryRoutes');
 const chatRoutes = require('./routes/chatRoutes')
-const adsRoutes = require('./routes/adRoutes')
+const adRoutes = require('./routes/adRoutes')
 //const adRoutes = require('./routes/adRoutes')
 
 dotenv.config();
@@ -18,8 +18,10 @@ connectDB();
 
 const app = express();
 
+const allowedOrigin = process.env.CLIENT_URL || 'http://localhost:5173';
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: allowedOrigin,
   methods: ['GET', 'POST' , 'PUT' ,  'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -43,7 +45,7 @@ app.use('/uploads', express.static(path.join(__dirname, '/uploads')))
 app.use('/api/chat', chatRoutes);
 
 //ads update/delete show mine
-app.use('/api/ads', adsRoutes)
+app.use('/api/ads', adRoutes)
 
 
 //user signup
