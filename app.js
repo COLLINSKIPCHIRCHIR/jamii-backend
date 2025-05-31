@@ -21,6 +21,7 @@ const app = express();
 
 const whitelist = [
   'http://localhost:5173', //Vite dev
+  'https://jamii-frontend.vercel.app',
   process.env.CLIENT_URL //render -> Vercel site
 ].filter(Boolean); // drop undefined items
 
@@ -32,7 +33,10 @@ const corsOptions = {
     //allow tools like curl/postman that send no origin header
     if (!origin) return cb(null, true);
 
-    if (whitelist.includes(origin)) return cb(null, true);
+    if (
+      whitelist.includes(origin) ||
+      origin.endsWith('.vercel.app')
+    ) { return cb(null, true);}
     cb(new Error(`CORS: ${origin} not allowed`));
   },
   credentials: true,
