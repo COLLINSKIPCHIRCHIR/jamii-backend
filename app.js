@@ -18,13 +18,27 @@ connectDB();
 
 const app = express();
 
-const allowedOrigin = process.env.CLIENT_URL || 'http://localhost:5173';
 
-app.use(cors({
-  origin: allowedOrigin,
-  methods: ['GET', 'POST' , 'PUT' ,  'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+const whitelist = [
+  'http://localhost:5173', //Vite dev
+  process.env.CLIENT_URL //render -> Vercel site
+].filter(Boolean); // drop undefined items
+
+const corsOptions = {
+  origin(origin, cb) {
+    //allow tools like curl/postman that send no origin header
+    if (!origin) return cb(null, true);
+
+    if (whitelist.includes(origin)) return cb(null, true);
+    cb(new Error(`CORS: ${origin} not allowed`));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowHeaders: ['Content-Type', 'Authorization']
+}
+
+app.use(cors(corsOptions));
+
 app.use(express.json()); //allows us to parse JSON to frontend
 
 
